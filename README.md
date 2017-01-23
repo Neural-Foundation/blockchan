@@ -1,2 +1,2 @@
-# blockchan
-A web application template for block chain based message boards.
+# BlockChan
+A web application that implements custom message boards on the Bitcoin's block chain with the help of http://CryptoGraffiti.info.
