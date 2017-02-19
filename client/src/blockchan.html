@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>BlockChan - Bitcoin Blockchain Message Channel</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="application-name" content="BlockChan" />
+<meta name="description" content="Read the messages that have been stored in the Bitcoin's blockchain or write them yourself." />
+<meta name="keywords" content="bitcoin blockchain message channel, block chain message chan, blockchan, blockchain chan, block chain chan" />
+
+<style media="screen" type="text/css">
+* {margin:0; padding:0;}
+html, body {height:100%; width:100%; font-family: monospace; overflow: hidden;}
+
+a:link, a:visited {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:link:active, a:visited:active, a:link:hover, a:visited:hover {
+    color: red;
+}
+
+.bc-borderbox {
+    margin-left: auto; 
+    margin-right: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.appear {
+    opacity: 0;
+    -webkit-animation-name: appear-anim;
+    -webkit-animation-duration: 1s;
+    animation-name: appear-anim;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@-webkit-keyframes appear-anim {
+    0%   {opacity: 0;}
+    100% {opacity: 1;}
+}
+@keyframes appear-anim {
+    0%   {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+.disappear {
+    opacity: 1;
+    -webkit-animation-name: disappear-anim;
+    -webkit-animation-duration: 0.5s;
+    animation-name: disappear-anim;
+    animation-duration: 0.5s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@-webkit-keyframes disappear-anim {
+    0%   {opacity: 1;}
+    100% {opacity: 0;}
+}
+@keyframes disappear-anim {
+    0%   {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.bc-symbol {
+    margin-right: 0.125ch;
+    margin-left: 0.125ch;
+}
+
+.bc-container {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.bc-txs-link:link, .bc-txs-link:visited {
+    color: blue;
+}
+
+#bc {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#bc-header {
+    display: table;
+    width: 100%;
+    height: 3rem;
+    overflow: hidden;
+    background-color: rgba(224,224,224, 0.5);
+    text-align: center;
+}
+
+#bc-footer {
+    display: table;
+    width: 100%;
+    height: 2rem;
+    overflow: hidden;
+    background-color: rgba(224,224,224, 0.5);
+    text-align: center;
+}
+
+#bc-body {
+    display: block;
+    width: 100%;
+    height: calc(100% - 5rem);
+}
+
+#bc-input, #bc-output {
+    max-width: 45ch;
+    width: 100%;
+}
+
+#bc-searchtable {
+    width: calc(100% - 0.125rem);
+    max-width: 30rem;
+    margin: auto;
+}
+
+#bc-table-container {
+    width: calc(100% - 2ch);
+    max-width: 45ch;
+}
+
+#bc-symbols, #bc-cancel {
+    font-size: 300%;
+    width: 2.5ch;
+}
+
+#bc-cancel {
+    text-align: left;
+}
+
+#bc-credits {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#bc-txs-span {
+    opacity: 0;
+}
+/* PASTE EXTERNAL CSS HERE */
+</style>
+
+<!-- BEGIN EXTERNAL SCRIPTS -->
+<script src="./lib/cryptojs/core.js"            ></script>
+<script src="./lib/cryptojs/lib-typedarrays.js" ></script>
+<script src="./lib/cryptojs/sha256.js"          ></script>
+<script src="./lib/cryptojs/ripemd160.js"       ></script>
+<script src="./lib/cryptojs/enc-base64.js"      ></script>
+<script src="./lib/bitcoin.js"                  ></script>
+<script src="./lib/sprintf.js"                  ></script>
+
+<script src="./main.js"  charset="UTF-8"></script>
+<script src="./utils.js" charset="UTF-8"></script>
+<!-- END EXTERNAL SCRIPTS -->
+</head>
+<body style="background-color: rgba(224,224,224, 0.5);">
+
+<div id="bc" class="appear">
+    <div id="bc-header">    
+        <h2 style="display: table-cell; vertical-align: middle;">BlockChan</h2>
+    </div>
+
+    <div id="bc-body">
+        <div style="display:table; width: 100%; height: 100%;">
+            <div style="display:table-cell;vertical-align:middle;">
+                <div style="margin-left:auto;margin-right:auto;">
+                    <div id="bc-main">
+                        <span id="bc-no-script">Please enable JavaScript.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bc-footer">
+        <span id="bc-credits">&copy;2017 BlockChan Developers</span>
+    </div>
+</div>
+
+<script>
+var noscript = document.getElementById("bc-no-script");
+while (noscript.hasChildNodes()) noscript.removeChild(noscript.lastChild);
+noscript.appendChild(document.createTextNode("⌛"));
+noscript.style.fontSize = "400%";
+noscript.style.opacity = "0.75";
+
+function fade_out() {
+    var cg = document.getElementById("bc");
+    if (cg !== null) {
+        if (cg.classList.contains('appear'))     cg.classList.remove('appear');
+        if (!cg.classList.contains('disappear')) cg.classList.add('disappear');
+    }
+}
+window.onbeforeunload = fade_out;
+</script>
+
+<script>
+bc_start();
+
+/* PASTE EXTERNAL JS HERE */
+</script>
+
+</body>
+</html>
