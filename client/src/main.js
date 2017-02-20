@@ -8,6 +8,9 @@ let BC_FILE_HASHER   = null;
 let BC_FILE_READING  = false;
 let BC_FILE_ITEMS    = [];
 let BC_FILE_CHECKING = false;
+let BC_LAST_ADDR     = null;
+let BC_REFRESH_TX_N  = true;
+let BC_HOT_INPUT     = false;
 
 function bc_start() {
     if (window.attachEvent) {
@@ -153,7 +156,22 @@ function bc_main_loop() {
     BC_FILE_UPDATE = true;
 
     if (BC_REFRESH_UI) bc_refresh_ui();
+    if (BC_REFRESH_TX_N && !BC_HOT_INPUT) {
+        bc_refresh_tx_n();
+        let output = document.getElementById("bc-output");
 
+        let find = document.getElementById("bc-link-find");
+        if (Bitcoin.testAddress(output.value)) {
+            find.href = "#"+output.value;
+            find.title = "Go to channel #"+output.value+".";
+        }
+        else {
+            find.href = "#";
+            find.title = "Do nothing.";
+        }
+    }
+
+    BC_HOT_INPUT = false;
     setTimeout(function(){
         bc_main_loop();
     }, 1000);
@@ -184,16 +202,18 @@ function bc_input_update() {
     let value = input.value;
 
     if (!Bitcoin.testAddress(value)) {
-        value = Bitcoin.createAddressFromText(value);
+        let ripemd160 = CryptoJS.algo.RIPEMD160.create();
+        ripemd160.update(value);
+        let hash = ripemd160.finalize();
+        value = Bitcoin.createAddressFromText(hex2ascii(hash));
     }
 
     let output = document.getElementById("bc-output");
+    if (output.value !== value) {
+        BC_REFRESH_TX_N = true;
+        BC_HOT_INPUT = true;
+    }
     output.value = value;
-    
-    let find = document.getElementById("bc-link-find");
-    find.href = "#"+value;
-    find.title = "Go to channel #"+value+".";
-    bc_refresh_txs("");
 }
 
 function bc_attach_file() {
@@ -234,6 +254,7 @@ function bc_file_try_to_cancel() {
     BC_FILE_ITEMS  = [];
 
     BC_REFRESH_UI = true;
+    BC_REFRESH_TX_N = true;
     let input = document.getElementById("bc-input");
     let output = document.getElementById("bc-output");
     input.value = "";
@@ -300,22 +321,7 @@ function bc_read_files() {
                 find.title = "Go to channel #"+addr+".";
 
                 BC_FILE_ITEMS.push(item);
-                BC_FILE_CHECKING = true;
-                xmlhttpGet("https://blockchain.info/multiaddr?active="+addr+"&cors=true&format=json", '',
-                    function(response) {
-                        BC_FILE_CHECKING = false;
-                             if (response === false);
-                        else if (response === null );
-                        else {
-                            var json = JSON.parse(response);
-                            if ("addresses" in json && json.addresses.length > 0
-                            && json.addresses[0].n_tx > 0) {
-                                bc_refresh_txs(addr, json.addresses[0].n_tx);
-                            }
-                            else bc_refresh_txs("");
-                        }
-                    }
-                );
+                BC_REFRESH_TX_N = true;
             }
             else status.value = "---";
         }
@@ -338,7 +344,6 @@ function bc_read_files() {
     }
 
     if (BC_FILE_POS === 0 && BC_FILE_HASHER === null) {
-        bc_refresh_txs("");
         let input = document.getElementById("bc-input");
         input.value = BC_FILE_LIST[0].name+" ("+formatBytes(BC_FILE_LIST[0].size)+")";
     }
@@ -346,6 +351,38 @@ function bc_read_files() {
     var buf_size  = 64*1024;
     var last_byte = Math.min(BC_FILE_POS+buf_size, BC_FILE_LIST[0].size-1);
     bc_read_blob(BC_FILE_LIST[0], BC_FILE_POS, last_byte);
+}
+
+function bc_refresh_tx_n() {
+    if (BC_FILE_CHECKING) return;
+    BC_REFRESH_TX_N = false;
+
+    let output = document.getElementById("bc-output");
+    let addr = output.value;
+
+    if (!Bitcoin.testAddress(addr) || addr === BC_LAST_ADDR) return;
+
+    BC_FILE_CHECKING = true;
+    xmlhttpGet("https://blockchain.info/multiaddr?active="+addr+"&cors=true&format=json", '',
+        function(response) {
+            BC_FILE_CHECKING = false;
+
+            let output = document.getElementById("bc-output");
+            if (addr !== output.value) return;
+
+                 if (response === false) bc_refresh_txs("");
+            else if (response === null ) bc_refresh_txs("");
+            else {
+                BC_LAST_ADDR = addr;
+                var json = JSON.parse(response);
+                if ("addresses" in json && json.addresses.length > 0
+                && json.addresses[0].n_tx > 0) {
+                    bc_refresh_txs(addr, json.addresses[0].n_tx);
+                }
+                else bc_refresh_txs("");
+            }
+        }
+    );
 }
 
 function bc_read_blob(file, opt_startByte, opt_stopByte) {
