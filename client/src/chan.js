@@ -69,8 +69,8 @@ function bc_chan_decode(tx) {
             let msgdiv = document.getElementById("bc-msg-"+tx);
             if (msgdiv === null) return;
 
+            msgdiv.classList.remove("bc-msg-decoding");
             if (json === false || json === null) {
-                msgdiv.classList.remove("bc-msg-decoding");
                 msgdiv.classList.add("bc-msg-failure");
                 return;
             }
