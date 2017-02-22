@@ -90,6 +90,25 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
     display: none;
 }
 
+.bc-msg {
+    text-align: left;
+    border: 1px solid blue;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bc-msg-decoding {
+    border: 1px solid yellow;
+}
+
+.bc-msg-decoded {
+    border: 1px solid black;
+}
+
+.bc-msg-failure {
+    border: 1px solid red;
+}
+
 #bc {
     width: 100%;
     height: 100%;
@@ -121,9 +140,11 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
     overflow: auto;
 }
 
-#bc-read {
+/*
+#bc-chan {
     background-color: blue;
 }
+*/
 
 #bc-input, #bc-output {
     max-width: 45ch;
@@ -171,6 +192,7 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 <script src="./lib/sprintf.js"                  ></script>
 
 <script src="./main.js"  charset="UTF-8"></script>
+<script src="./chan.js"  charset="UTF-8"></script>
 <script src="./utils.js" charset="UTF-8"></script>
 <!-- END EXTERNAL SCRIPTS -->
 </head>
@@ -192,7 +214,7 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
             </div>
         </div>
         <div id="bc-main" class="bc-view bc-hidden-view"></div>
-        <div id="bc-read" class="bc-view bc-hidden-view"></div>
+        <div id="bc-chan" class="bc-view bc-hidden-view"></div>
     </div>
 
     <div id="bc-footer">

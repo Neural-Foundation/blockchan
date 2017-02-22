@@ -12,6 +12,7 @@ let BC_LAST_ADDR     = null;
 let BC_REFRESH_TX_N  = true;
 let BC_HOT_INPUT     = false;
 let BC_ADDRESS       = null;
+let BC_TXS           = null;
 
 function bc_start() {
     if (window.attachEvent) {
@@ -192,6 +193,8 @@ function bc_main_loop() {
         bc_refresh_main_links();
     }
 
+    bc_chan_step();
+
     BC_HOT_INPUT = false;
     setTimeout(function(){
         bc_main_loop();
@@ -269,7 +272,7 @@ function bc_file_selection(files) {
     }
     bc_refresh_ui();
     bc_read_files();
-    bc_refresh_txs("");
+    BC_REFRESH_TX_N = true;
     BC_LAST_ADDR = null;
 
     var browse_cell = document.getElementById("bc-browse-cell");
@@ -397,7 +400,12 @@ function bc_refresh_tx_n() {
     let output = document.getElementById("bc-output");
     let addr = output.value;
 
-    if (!Bitcoin.testAddress(addr) || addr === BC_LAST_ADDR) return;
+    if (!Bitcoin.testAddress(addr)) {
+        bc_refresh_txs("");
+        return;
+    }
+
+    if (addr === BC_LAST_ADDR) return;
 
     BC_FILE_CHECKING = true;
     xmlhttpGet("https://blockchain.info/multiaddr?active="+addr+"&cors=true&format=json", '',
@@ -415,6 +423,7 @@ function bc_refresh_tx_n() {
                 if ("addresses" in json && json.addresses.length > 0
                 && json.addresses[0].n_tx > 0) {
                     bc_refresh_txs(addr, json.addresses[0].n_tx);
+                    BC_TXS = json.txs;
                 }
                 else bc_refresh_txs("");
             }
@@ -546,7 +555,7 @@ let bc_check_hash = (function() {
                     view.classList.remove("bc-hidden-view");
                 }
                 else {
-                    let view = document.getElementById("bc-read");
+                    let view = document.getElementById("bc-chan");
                     view.classList.remove("disappear");
                     view.classList.add("appear");
                     view.classList.remove("bc-hidden-view");
