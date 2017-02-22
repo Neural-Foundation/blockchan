@@ -505,7 +505,11 @@ let bc_check_hash = (function() {
 
         if (address !== null) {
             let input = document.getElementById("bc-input");
-            if (input.value !== address) {
+            var ripemd160 = CryptoJS.algo.RIPEMD160.create();
+            ripemd160.update(input.value);
+            let input_hash = Bitcoin.createAddressFromText(hex2ascii(ripemd160.finalize()));
+
+            if (input.value !== address && input_hash !== address) {
                 input.value = address;
                 bc_input_update();
                 running = false;
@@ -513,7 +517,8 @@ let bc_check_hash = (function() {
             }
 
             let output = document.getElementById("bc-output");
-            if (output.value !== input.value || BC_FILE_CHECKING) {
+            if ((output.value !== input.value && output.value !== input_hash)
+            || BC_FILE_CHECKING) {
                 running = false;
                 return;
             }
