@@ -11,6 +11,7 @@ let BC_FILE_CHECKING = false;
 let BC_LAST_ADDR     = null;
 let BC_REFRESH_TX_N  = true;
 let BC_HOT_INPUT     = false;
+let BC_ADDRESS       = null;
 
 function bc_start() {
     if (window.attachEvent) {
@@ -30,13 +31,29 @@ function bc_start() {
 }
 
 function bc_main() {
-    let main = document.getElementById("bc-main");
-    main.classList.add("disappear");
+    let greet = document.getElementById("bc-greet");
+    greet.classList.add("disappear");
 
     setTimeout(function() {
-        // Let's remove the greeting text.
+        let greet = document.getElementById("bc-greet");
+        greet.classList.add("bc-hidden-view");
+
         let main = document.getElementById("bc-main");
+        main.classList.remove("bc-hidden-view");
+
+        // Let's remove the greeting text.
         while (main.hasChildNodes()) main.removeChild(main.lastChild);
+
+        let wrapper_table = document.createElement("div");
+        wrapper_table.style.width="100%";
+        wrapper_table.style.height="100%";
+        wrapper_table.style.display="table";
+        let wrapper_cell = document.createElement("div");
+        wrapper_cell.style.display="table-cell";
+        wrapper_cell.style.verticalAlign="middle";
+        let wrapper = document.createElement("div");
+        wrapper.style.marginLeft="auto";
+        wrapper.style.marginRight="auto";
 
         // Let's construct the channel index input.
         let container = document.createElement("div");
@@ -104,6 +121,11 @@ function bc_main() {
         sym_stop.href = "#";
         sym_stop.id = "bc-link-stop";
 
+        sym_find.onclick = function() {
+            bc_refresh_main_links();
+            return true;
+        }
+
         sym_file.onclick = function() {
             bc_attach_file();
             return false;
@@ -138,43 +160,56 @@ function bc_main() {
         table.appendChild(tr3);
         table.appendChild(tr4);
         container.appendChild(table);
-        main.appendChild(container);
+
+        wrapper.appendChild(container);
         symbols.appendChild(sym_file);
         symbols.appendChild(sym_find);
-        main.appendChild(symbols);
+        wrapper.appendChild(symbols);
         cancel.appendChild(sym_stop);
-        main.appendChild(cancel);
+        wrapper.appendChild(cancel);
+        wrapper_cell.appendChild(wrapper);
+        wrapper_table.appendChild(wrapper_cell);
 
-        main.classList.remove("disappear");
+        main.appendChild(wrapper_table);
         main.classList.add("appear");
+
+        bc_refresh_ui();
         // Let's start the main loop.
-        bc_main_loop();
-    }, 1000);
+        setTimeout(function() {
+            bc_main_loop();
+        }, 1000);
+    }, 500);
 }
 
 function bc_main_loop() {
     BC_FILE_UPDATE = true;
 
+    bc_check_hash();
+
     if (BC_REFRESH_UI) bc_refresh_ui();
     if (BC_REFRESH_TX_N && !BC_HOT_INPUT) {
         bc_refresh_tx_n();
-        let output = document.getElementById("bc-output");
-
-        let find = document.getElementById("bc-link-find");
-        if (Bitcoin.testAddress(output.value)) {
-            find.href = "#"+output.value;
-            find.title = "Go to channel #"+output.value+".";
-        }
-        else {
-            find.href = "#";
-            find.title = "Do nothing.";
-        }
+        bc_refresh_main_links();
     }
 
     BC_HOT_INPUT = false;
     setTimeout(function(){
         bc_main_loop();
     }, 1000);
+}
+
+function bc_refresh_main_links() {
+    let output = document.getElementById("bc-output");
+
+    let find = document.getElementById("bc-link-find");
+    if (Bitcoin.testAddress(output.value)) {
+        find.href = "#"+output.value;
+        find.title = "Go to channel #"+output.value+".";
+    }
+    else {
+        find.href = "#";
+        find.title = "Do nothing.";
+    }
 }
 
 function bc_refresh_ui() {
@@ -234,6 +269,8 @@ function bc_file_selection(files) {
     }
     bc_refresh_ui();
     bc_read_files();
+    bc_refresh_txs("");
+    BC_LAST_ADDR = null;
 
     var browse_cell = document.getElementById("bc-browse-cell");
     while (browse_cell.hasChildNodes()) browse_cell.removeChild(browse_cell.lastChild);
@@ -446,4 +483,77 @@ function bc_refresh_txs(addr, n_tx) {
     txs.classList.remove("disappear");
     txs.classList.add("appear");
 }
+
+let bc_check_hash = (function() {
+    let running = false;
+
+    return function() {
+        if (running) return;
+        running = true;
+
+        let address = null;
+        let hashes = location.hash.substring(1).split("#");
+        for (let i=0, sz=hashes.length; i<sz; ++i) {
+            let hash = decodeURIComponent(hashes[i]);
+                 if (Bitcoin.testAddress(hash)) address = hash;
+            else if (hash.length > 0) {
+                var ripemd160 = CryptoJS.algo.RIPEMD160.create();
+                ripemd160.update(hash);
+                address = Bitcoin.createAddressFromText(hex2ascii(ripemd160.finalize()));
+            }
+        }
+
+        if (address !== null) {
+            let input = document.getElementById("bc-input");
+            if (input.value !== address) {
+                input.value = address;
+                bc_input_update();
+                running = false;
+                return;
+            }
+
+            let output = document.getElementById("bc-output");
+            if (output.value !== input.value || BC_FILE_CHECKING) {
+                running = false;
+                return;
+            }
+        }
+
+        if (address !== BC_ADDRESS) {
+            BC_ADDRESS = address;
+
+            let x = document.getElementsByClassName("bc-view");
+            for (let i = 0; i < x.length; i++) {
+                x[i].classList.remove("appear");
+                x[i].classList.add("disappear");
+            }
+
+            setTimeout(function() {
+                let x = document.getElementsByClassName("bc-view");
+                for (let i = 0; i < x.length; i++) {
+                    x[i].classList.add("bc-hidden-view");
+                }
+
+                if (BC_ADDRESS === null) {
+                    let view = document.getElementById("bc-main");
+                    view.classList.remove("disappear");
+                    view.classList.add("appear");
+                    view.classList.remove("bc-hidden-view");
+                }
+                else {
+                    let view = document.getElementById("bc-read");
+                    view.classList.remove("disappear");
+                    view.classList.add("appear");
+                    view.classList.remove("bc-hidden-view");
+                }
+
+                running = false;
+            }, 500);
+
+            return;
+        }
+
+        running = false;
+    };
+})();
 

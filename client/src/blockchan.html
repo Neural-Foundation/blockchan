@@ -81,6 +81,15 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
     color: blue;
 }
 
+.bc-view {
+    width: 100%;
+    height: 100%;
+}
+
+.bc-hidden-view {
+    display: none;
+}
+
 #bc {
     width: 100%;
     height: 100%;
@@ -109,6 +118,11 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
     display: block;
     width: 100%;
     height: calc(100% - 5rem);
+    overflow: auto;
+}
+
+#bc-read {
+    background-color: blue;
 }
 
 #bc-input, #bc-output {
@@ -168,15 +182,17 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
     </div>
 
     <div id="bc-body">
-        <div style="display:table; width: 100%; height: 100%;">
-            <div style="display:table-cell;vertical-align:middle;">
-                <div style="margin-left:auto;margin-right:auto;">
-                    <div id="bc-main">
+        <div id="bc-greet" class="bc-view">
+            <div style="display:table; width: 100%; height: 100%;">
+                <div style="display:table-cell;vertical-align:middle;">
+                    <div style="margin-left:auto; margin-right:auto;">
                         <span id="bc-no-script">Please enable JavaScript.</span>
                     </div>
                 </div>
             </div>
         </div>
+        <div id="bc-main" class="bc-view bc-hidden-view"></div>
+        <div id="bc-read" class="bc-view bc-hidden-view"></div>
     </div>
 
     <div id="bc-footer">
