@@ -15,8 +15,8 @@ let bc_chan_step = (function() {
 
         if (BC_CHAN_ADDR !== BC_LAST_ADDR) {
             BC_CHAN_ADDR = BC_LAST_ADDR;
-            let chan = document.getElementById("bc-chan");
-            while (chan.hasChildNodes()) chan.removeChild(chan.lastChild);
+            let chan_read = document.getElementById("bc-chan-read");
+            while (chan_read.hasChildNodes()) chan_read.removeChild(chan_read.lastChild);
 
             BC_CHAN_TXS = [];
             if (BC_TXS !== null) {
@@ -28,7 +28,7 @@ let bc_chan_step = (function() {
                     msg.classList.add("bc-msg");
                     msg.classList.add("bc-borderbox");
                     msg.appendChild(document.createTextNode(tx_hash));
-                    chan.appendChild(msg);
+                    chan_read.appendChild(msg);
                 }
             }
 
@@ -56,7 +56,57 @@ let bc_chan_step = (function() {
 })();
 
 function bc_chan_initialize() {
-    let chan = document.getElementById("bc-chan");
+    let chan_write = document.getElementById("bc-chan-write");
+    let text_area = document.createElement("textarea");
+    text_area.id = "bc-chan-write-textarea";
+    text_area.classList.add("bc-borderbox");
+
+    /*
+    let wrapper_table = document.createElement("div");
+    wrapper_table.style.width="100%";
+    wrapper_table.style.height="100%";
+    wrapper_table.style.display="table";
+    let wrapper_cell = document.createElement("div");
+    wrapper_cell.style.display="table-cell";
+    wrapper_cell.style.verticalAlign="middle";
+    let wrapper = document.createElement("div");
+    wrapper.style.marginLeft="auto";
+    wrapper.style.marginRight="auto";
+
+    wrapper.appendChild(text_area);
+    wrapper_cell.appendChild(wrapper);
+    wrapper_table.appendChild(wrapper_cell);
+    chan_write.appendChild(wrapper_table);
+    */
+
+    let btn_1 = document.createElement("BUTTON");
+    let btn_2 = document.createElement("BUTTON");
+    btn_1.appendChild(document.createTextNode("BACK"));
+    btn_2.appendChild(document.createTextNode("POST"));
+    btn_1.style.width="100%";
+    btn_2.style.width="100%";
+    btn_1.style.maxWidth="10ch";
+    btn_2.style.maxWidth="10ch";
+
+    btn_1.addEventListener("click", bc_chan_button_click_back);
+    btn_2.addEventListener("click", bc_chan_button_click_post);
+
+    let t = document.createElement("table");
+    let tr = document.createElement("tr");
+    let td1 = document.createElement("td");
+    let td2 = document.createElement("td");
+    let td3 = document.createElement("td");
+    t.style.width="100%";
+    t.style.height="100%";
+
+    td1.appendChild(btn_1);
+    td2.appendChild(text_area);
+    td3.appendChild(btn_2);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    t.appendChild(tr);
+    chan_write.appendChild(t);
 }
 
 function bc_chan_decode(tx) {
@@ -126,7 +176,25 @@ function bc_chan_decode(tx) {
                     let txt = msg;
 
                     while (msgdiv.hasChildNodes()) msgdiv.removeChild(msgdiv.lastChild);
+
+                    if (timestamp != 0) {
+                        msgdiv.appendChild(document.createTextNode(timeConverter(timestamp)));
+                        msgdiv.appendChild(document.createElement("br"));
+                    }
+
                     msgdiv.appendChild(document.createTextNode(txt));
+
+                    let t_txid = document.createTextNode(tx);
+                    let a_txid = document.createElement("a");
+                    a_txid.appendChild(t_txid);
+                    a_txid.title = "View in BlockChain.info.";
+                    a_txid.href  = "https://blockchain.info/tx/"+tx;
+                    a_txid.target= "_blank";
+                    a_txid.classList.add("bc-txs-link");
+
+                    msgdiv.appendChild(document.createElement("br"));
+                    msgdiv.appendChild(a_txid);
+                    msgdiv.appendChild(document.createElement("hr"));
                 }
             }
         }
@@ -152,5 +220,20 @@ function bc_chan_extract_blockchaininfo(r) {
         }
     }
     return [out_bytes, op_return, r.time];
+}
+
+function bc_chan_button_click_back() {
+    if (history.pushState) {
+        history.pushState(null, null, '#');
+    }
+    else {
+        location.hash = '#';
+    }
+}
+
+function bc_chan_button_click_post() {
+    let text_area = document.getElementById("bc-chan-write-textarea");
+    let txt = encodeURIComponent(text_area.value);
+    window.open("http://cryptograffiti.info#"+BC_CHAN_ADDR+"#write:"+txt, "_blank");
 }
 

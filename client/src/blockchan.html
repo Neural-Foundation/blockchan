@@ -92,9 +92,10 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 
 .bc-msg {
     text-align: left;
-    border: 1px solid blue;
+    border: 1px solid transparent;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-top: 1ch;
 }
 
 .bc-msg-decoding {
@@ -102,7 +103,7 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 }
 
 .bc-msg-decoded {
-    border: 1px solid black;
+    border: 1px solid transparent;
 }
 
 .bc-msg-failure {
@@ -179,6 +180,26 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 #bc-txs-span {
     opacity: 0;
 }
+
+#bc-chan-read {
+    height: 85%;
+    max-height: calc(100% - 10ch);
+    overflow: auto;
+}
+
+#bc-chan-write {
+    background-color: rgba(224,224,224, 0.5);
+    min-height: 10ch;
+    height: 15%;
+    padding-top: 1ch;
+    padding-bottom: 1ch;
+}
+
+#bc-chan-write-textarea {
+    width: 100%;
+    height: 100%;
+    resize: none;
+}
 /* PASTE EXTERNAL CSS HERE */
 </style>
 
@@ -214,7 +235,10 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
             </div>
         </div>
         <div id="bc-main" class="bc-view bc-hidden-view"></div>
-        <div id="bc-chan" class="bc-view bc-hidden-view"></div>
+        <div id="bc-chan" class="bc-view bc-hidden-view">
+            <div id="bc-chan-read"></div>
+            <div id="bc-chan-write" class="bc-borderbox"></div>
+        </div>
     </div>
 
     <div id="bc-footer">
