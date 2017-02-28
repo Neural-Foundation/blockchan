@@ -119,7 +119,6 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 #bc-header {
     display: table;
     width: 100%;
-    height: 3rem;
     overflow: hidden;
     background-color: rgba(224,224,224, 0.5);
     text-align: center;
@@ -128,7 +127,6 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 #bc-footer {
     display: table;
     width: 100%;
-    height: 2rem;
     overflow: hidden;
     background-color: rgba(224,224,224, 0.5);
     text-align: center;
@@ -136,16 +134,15 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 
 #bc-body {
     display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     width: 100%;
-    height: calc(100% - 5rem);
+    height: 100%;
     overflow: auto;
 }
-
-/*
-#bc-chan {
-    background-color: blue;
-}
-*/
 
 #bc-input, #bc-output {
     max-width: 45ch;
@@ -220,29 +217,43 @@ a:link:active, a:visited:active, a:link:hover, a:visited:hover {
 <body style="background-color: rgba(224,224,224, 0.5);">
 
 <div id="bc" class="appear">
-    <div id="bc-header">    
-        <h2 style="display: table-cell; vertical-align: middle;">BlockChan</h2>
-    </div>
-
-    <div id="bc-body">
-        <div id="bc-greet" class="bc-view">
-            <div style="display:table; width: 100%; height: 100%;">
-                <div style="display:table-cell;vertical-align:middle;">
-                    <div style="margin-left:auto; margin-right:auto;">
-                        <span id="bc-no-script">Please enable JavaScript.</span>
-                    </div>
+    <div style="display: table; width: 100%; height: 100%; table-layout: fixed;">
+        <div style="display: table-row; width: 100%;">
+            <div style="display: inline-block; max-height: 50vh; width: 100%; overflow: hidden;">
+                <div id="bc-header">
+                    <h2 style="display: table-cell; vertical-align: middle;">BlockChan</h2>
                 </div>
             </div>
         </div>
-        <div id="bc-main" class="bc-view bc-hidden-view"></div>
-        <div id="bc-chan" class="bc-view bc-hidden-view">
-            <div id="bc-chan-read"></div>
-            <div id="bc-chan-write" class="bc-borderbox"></div>
-        </div>
-    </div>
 
-    <div id="bc-footer">
-        <span id="bc-credits">&copy;2017 BlockChan Developers</span>
+        <div style="display: table-row; width: 100%; height: 100%;">
+            <div style="width: 100%; height: 100%; position: relative;">
+            <div id="bc-body">
+                <div id="bc-greet" class="bc-view">
+                    <div style="display:table; width: 100%; height: 100%;">
+                        <div style="display:table-cell;vertical-align:middle;">
+                            <div style="margin-left:auto; margin-right:auto;">
+                                <span id="bc-no-script">Please enable JavaScript.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="bc-main" class="bc-view bc-hidden-view"></div>
+                <div id="bc-chan" class="bc-view bc-hidden-view">
+                    <div id="bc-chan-read"></div>
+                    <div id="bc-chan-write" class="bc-borderbox"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div style="display: table-row; width: 100%;">
+            <div style="display: inline-block; max-height: 50vh; width: 100%; overflow: hidden;">
+                <div id="bc-footer">
+                    <span id="bc-credits">&copy;2017 BlockChan Developers</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

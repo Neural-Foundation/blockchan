@@ -96,6 +96,7 @@ function bc_chan_initialize() {
     let td1 = document.createElement("td");
     let td2 = document.createElement("td");
     let td3 = document.createElement("td");
+    tr.style.height="100%";
     t.style.width="100%";
     t.style.height="100%";
 
