@@ -1,11 +1,11 @@
 "use strict";
 
-let BC_CHAN_ADDR = null;
-let BC_CHAN_TXS = [];
-let BC_CHAN_DECODING = null;
+var BC_CHAN_ADDR = null;
+var BC_CHAN_TXS = [];
+var BC_CHAN_DECODING = null;
 
-let bc_chan_step = (function() {
-    let initialized = false;
+var bc_chan_step = (function() {
+    var initialized = false;
 
     return function() {
         if (!initialized) {
@@ -15,15 +15,15 @@ let bc_chan_step = (function() {
 
         if (BC_CHAN_ADDR !== BC_LAST_ADDR) {
             BC_CHAN_ADDR = BC_LAST_ADDR;
-            let chan_read = document.getElementById("bc-chan-read");
+            var chan_read = document.getElementById("bc-chan-read");
             while (chan_read.hasChildNodes()) chan_read.removeChild(chan_read.lastChild);
 
             BC_CHAN_TXS = [];
             if (BC_TXS !== null) {
-                for (let i=0, sz = BC_TXS.length; i<sz; ++i) {
-                    let tx_hash = BC_TXS[i].hash;
+                for (var i=0, sz = BC_TXS.length; i<sz; ++i) {
+                    var tx_hash = BC_TXS[i].hash;
                     BC_CHAN_TXS.push(tx_hash);
-                    let msg = document.createElement("div");
+                    var msg = document.createElement("div");
                     msg.id = "bc-msg-"+tx_hash;
                     msg.classList.add("bc-msg");
                     msg.classList.add("bc-borderbox");
@@ -40,9 +40,9 @@ let bc_chan_step = (function() {
         }
 
         if (BC_CHAN_TXS.length > 0) {
-            let tx = BC_CHAN_TXS.shift();
+            var tx = BC_CHAN_TXS.shift();
             BC_CHAN_TXS.push(tx);
-            let msg = document.getElementById("bc-msg-"+tx);
+            var msg = document.getElementById("bc-msg-"+tx);
             if (msg !== null) {
                 if (!msg.classList.contains("bc-msg-decoding")
                 &&  !msg.classList.contains("bc-msg-decoded")) {
@@ -56,20 +56,20 @@ let bc_chan_step = (function() {
 })();
 
 function bc_chan_initialize() {
-    let chan_write = document.getElementById("bc-chan-write");
-    let text_area = document.createElement("textarea");
+    var chan_write = document.getElementById("bc-chan-write");
+    var text_area = document.createElement("textarea");
     text_area.id = "bc-chan-write-textarea";
     text_area.classList.add("bc-borderbox");
 
     /*
-    let wrapper_table = document.createElement("div");
+    var wrapper_table = document.createElement("div");
     wrapper_table.style.width="100%";
     wrapper_table.style.height="100%";
     wrapper_table.style.display="table";
-    let wrapper_cell = document.createElement("div");
+    var wrapper_cell = document.createElement("div");
     wrapper_cell.style.display="table-cell";
     wrapper_cell.style.verticalAlign="middle";
-    let wrapper = document.createElement("div");
+    var wrapper = document.createElement("div");
     wrapper.style.marginLeft="auto";
     wrapper.style.marginRight="auto";
 
@@ -79,8 +79,8 @@ function bc_chan_initialize() {
     chan_write.appendChild(wrapper_table);
     */
 
-    let btn_1 = document.createElement("BUTTON");
-    let btn_2 = document.createElement("BUTTON");
+    var btn_1 = document.createElement("BUTTON");
+    var btn_2 = document.createElement("BUTTON");
     btn_1.appendChild(document.createTextNode("BACK"));
     btn_2.appendChild(document.createTextNode("POST"));
     btn_1.style.width="100%";
@@ -91,11 +91,11 @@ function bc_chan_initialize() {
     btn_1.addEventListener("click", bc_chan_button_click_back);
     btn_2.addEventListener("click", bc_chan_button_click_post);
 
-    let t = document.createElement("table");
-    let tr = document.createElement("tr");
-    let td1 = document.createElement("td");
-    let td2 = document.createElement("td");
-    let td3 = document.createElement("td");
+    var t = document.createElement("table");
+    var tr = document.createElement("tr");
+    var td1 = document.createElement("td");
+    var td2 = document.createElement("td");
+    var td3 = document.createElement("td");
     tr.style.height="100%";
     t.style.width="100%";
     t.style.height="100%";
@@ -117,7 +117,7 @@ function bc_chan_decode(tx) {
         function(json) {
             BC_CHAN_DECODING = null;
 
-            let msgdiv = document.getElementById("bc-msg-"+tx);
+            var msgdiv = document.getElementById("bc-msg-"+tx);
             if (msgdiv === null) return;
 
             msgdiv.classList.remove("bc-msg-decoding");
@@ -127,29 +127,29 @@ function bc_chan_decode(tx) {
             }
 
             msgdiv.classList.add("bc-msg-decoded");
-            let response = JSON.parse(json);
+            var response = JSON.parse(json);
 
             if (typeof response === 'object') {
-                let r = response;
-                let msg  = "";
-                let out_bytes= "";
-                let op_return= "";
-                let timestamp=  0;
-                let op_return_msg = "";
-                let filehash = null;
+                var r = response;
+                var msg  = "";
+                var out_bytes= "";
+                var op_return= "";
+                var timestamp=  0;
+                var op_return_msg = "";
+                var filehash = null;
 
-                let extract = bc_chan_extract_blockchaininfo(r);
+                var extract = bc_chan_extract_blockchaininfo(r);
                 if (extract !== null) {
                     out_bytes = extract[0];
                     op_return = extract[1];
                     timestamp = extract[2];
 
-                    let fsz = is_blockchain_file(out_bytes);
-                    let blockchain_file = null;
+                    var fsz = is_blockchain_file(out_bytes);
+                    var blockchain_file = null;
                     if (fsz > 0) {
                         blockchain_file = out_bytes.substr(0, fsz);
-                        let comment_start = fsz;
-                        let comment_mod   = fsz % 20;
+                        var comment_start = fsz;
+                        var comment_mod   = fsz % 20;
                         if (comment_mod !== 0) {
                             comment_start+= (20-comment_mod);
                         }
@@ -158,11 +158,11 @@ function bc_chan_decode(tx) {
                         out_bytes = out_bytes.slice(comment_start + 20); // 20 to compensate file hash.
                     }
 
-                    let msg_utf8  = decode_utf8(out_bytes);
-                    let msg_ascii = decode_ascii(out_bytes);
+                    var msg_utf8  = decode_utf8(out_bytes);
+                    var msg_ascii = decode_ascii(out_bytes);
 
-                    let len_utf8 = msg_utf8.length;
-                    let len_ascii= msg_ascii.length;
+                    var len_utf8 = msg_utf8.length;
+                    var len_ascii= msg_ascii.length;
                          if (len_utf8 <=        1) msg = msg_ascii;
                     else if (len_utf8 < len_ascii) msg = msg_ascii;
                     else                           msg = msg_utf8;
@@ -174,7 +174,7 @@ function bc_chan_decode(tx) {
                         msg = msg + "-----BEGIN OP_RETURN MESSAGE BLOCK-----\n" 
                                   + op_return_msg + "\n----- END OP_RETURN MESSAGE BLOCK -----";
                     }
-                    let txt = msg;
+                    var txt = msg;
 
                     while (msgdiv.hasChildNodes()) msgdiv.removeChild(msgdiv.lastChild);
 
@@ -185,8 +185,8 @@ function bc_chan_decode(tx) {
 
                     msgdiv.appendChild(document.createTextNode(txt));
 
-                    let t_txid = document.createTextNode(tx);
-                    let a_txid = document.createElement("a");
+                    var t_txid = document.createTextNode(tx);
+                    var a_txid = document.createElement("a");
                     a_txid.appendChild(t_txid);
                     a_txid.title = "View in BlockChain.info.";
                     a_txid.href  = "https://blockchain.info/tx/"+tx;
@@ -233,8 +233,8 @@ function bc_chan_button_click_back() {
 }
 
 function bc_chan_button_click_post() {
-    let text_area = document.getElementById("bc-chan-write-textarea");
-    let txt = encodeURIComponent(text_area.value);
+    var text_area = document.getElementById("bc-chan-write-textarea");
+    var txt = encodeURIComponent(text_area.value);
     window.open("http://cryptograffiti.info#"+BC_CHAN_ADDR+"#write:"+txt, "_blank");
 }
 

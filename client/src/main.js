@@ -1,18 +1,18 @@
 "use strict";
 
-let BC_REFRESH_UI    = true;
-let BC_FILE_LIST     = [];
-let BC_FILE_POS      = 0;
-let BC_FILE_UPDATE   = true;
-let BC_FILE_HASHER   = null;
-let BC_FILE_READING  = false;
-let BC_FILE_ITEMS    = [];
-let BC_FILE_CHECKING = false;
-let BC_LAST_ADDR     = null;
-let BC_REFRESH_TX_N  = true;
-let BC_HOT_INPUT     = false;
-let BC_ADDRESS       = null;
-let BC_TXS           = null;
+var BC_REFRESH_UI    = true;
+var BC_FILE_LIST     = [];
+var BC_FILE_POS      = 0;
+var BC_FILE_UPDATE   = true;
+var BC_FILE_HASHER   = null;
+var BC_FILE_READING  = false;
+var BC_FILE_ITEMS    = [];
+var BC_FILE_CHECKING = false;
+var BC_LAST_ADDR     = null;
+var BC_REFRESH_TX_N  = true;
+var BC_HOT_INPUT     = false;
+var BC_ADDRESS       = null;
+var BC_TXS           = null;
 
 function bc_start() {
     if (window.attachEvent) {
@@ -32,53 +32,53 @@ function bc_start() {
 }
 
 function bc_main() {
-    let greet = document.getElementById("bc-greet");
+    var greet = document.getElementById("bc-greet");
     greet.classList.add("disappear");
 
     setTimeout(function() {
-        let greet = document.getElementById("bc-greet");
+        var greet = document.getElementById("bc-greet");
         greet.classList.add("bc-hidden-view");
 
-        let main = document.getElementById("bc-main");
+        var main = document.getElementById("bc-main");
         main.classList.remove("bc-hidden-view");
 
         // Let's remove the greeting text.
         while (main.hasChildNodes()) main.removeChild(main.lastChild);
 
-        let wrapper_table = document.createElement("div");
+        var wrapper_table = document.createElement("div");
         wrapper_table.style.width="100%";
         wrapper_table.style.height="100%";
         wrapper_table.style.display="table";
-        let wrapper_cell = document.createElement("div");
+        var wrapper_cell = document.createElement("div");
         wrapper_cell.style.display="table-cell";
         wrapper_cell.style.verticalAlign="middle";
-        let wrapper = document.createElement("div");
+        var wrapper = document.createElement("div");
         wrapper.style.marginLeft="auto";
         wrapper.style.marginRight="auto";
 
         // Let's construct the channel index input.
-        let container = document.createElement("div");
-        let table = document.createElement("table");
-        let caption = document.createElement("caption");
-        let tr1 = document.createElement("tr");
-        let tr2 = document.createElement("tr");
-        let tr3 = document.createElement("tr");
-        let tr4 = document.createElement("tr");
-        let td1 = document.createElement("td");
-        let td2 = document.createElement("td");
-        let td3 = document.createElement("td");
-        let td4 = document.createElement("td");
-        let symbols = document.createElement("div");
-        let cancel  = document.createElement("div");
-        let sym_file_txt = document.createElement("span");
-        let sym_file = document.createElement("a");
-        let sym_find_txt = document.createElement("span");
-        let sym_find = document.createElement("a");
-        let sym_stop_txt = document.createElement("span");
-        let sym_stop = document.createElement("a");
+        var container = document.createElement("div");
+        var table = document.createElement("table");
+        var caption = document.createElement("caption");
+        var tr1 = document.createElement("tr");
+        var tr2 = document.createElement("tr");
+        var tr3 = document.createElement("tr");
+        var tr4 = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        var td4 = document.createElement("td");
+        var symbols = document.createElement("div");
+        var cancel  = document.createElement("div");
+        var sym_file_txt = document.createElement("span");
+        var sym_file = document.createElement("a");
+        var sym_find_txt = document.createElement("span");
+        var sym_find = document.createElement("a");
+        var sym_stop_txt = document.createElement("span");
+        var sym_stop = document.createElement("a");
         table.id = "bc-searchtable";
 
-        let input = document.createElement("input");
+        var input = document.createElement("input");
         input.size = "1";
         input.id = "bc-input";
         input.placeholder = "Enter the channel keyword or its Bitcoin address here.";
@@ -89,7 +89,7 @@ function bc_main() {
             }, false);
         }
 
-        let output = document.createElement("input");
+        var output = document.createElement("input");
         output.size = "1";
         output.id = "bc-output";
         output.placeholder = "Channel's Bitcoin address will appear here.";
@@ -137,11 +137,11 @@ function bc_main() {
             return false;
         }
 
-        let invis = document.createElement("div");
+        var invis = document.createElement("div");
         invis.style.display = "none";
         invis.id = "bc-browse-cell";
 
-        let txs = document.createElement("span");
+        var txs = document.createElement("span");
         txs.id = "bc-txs-span";
         txs.appendChild(document.createTextNode("(empty channel)"));
 
@@ -202,9 +202,9 @@ function bc_main_loop() {
 }
 
 function bc_refresh_main_links() {
-    let output = document.getElementById("bc-output");
+    var output = document.getElementById("bc-output");
 
-    let find = document.getElementById("bc-link-find");
+    var find = document.getElementById("bc-link-find");
     if (Bitcoin.testAddress(output.value)) {
         find.href = "#"+output.value;
         find.title = "Go to channel #"+output.value+".";
@@ -217,14 +217,14 @@ function bc_refresh_main_links() {
 
 function bc_refresh_ui() {
     BC_REFRESH_UI = false;
-    let input = document.getElementById("bc-input");
+    var input = document.getElementById("bc-input");
     if (BC_FILE_LIST.length == 0) {
         input.disabled = false;
     }
     else input.disabled = true;
 
-    let symbols = document.getElementById("bc-symbols");
-    let cancel  = document.getElementById("bc-cancel");
+    var symbols = document.getElementById("bc-symbols");
+    var cancel  = document.getElementById("bc-cancel");
     if (BC_FILE_LIST.length > 0) {
         symbols.style.display = "none";
         cancel.style.display = "inline-block";
@@ -236,17 +236,17 @@ function bc_refresh_ui() {
 }
 
 function bc_input_update() {
-    let input = document.getElementById("bc-input");
-    let value = input.value;
+    var input = document.getElementById("bc-input");
+    var value = input.value;
 
     if (!Bitcoin.testAddress(value)) {
-        let ripemd160 = CryptoJS.algo.RIPEMD160.create();
+        var ripemd160 = CryptoJS.algo.RIPEMD160.create();
         ripemd160.update(value);
-        let hash = ripemd160.finalize();
+        var hash = ripemd160.finalize();
         value = Bitcoin.createAddressFromText(hex2ascii(hash));
     }
 
-    let output = document.getElementById("bc-output");
+    var output = document.getElementById("bc-output");
     if (output.value !== value) {
         BC_REFRESH_TX_N = true;
         BC_HOT_INPUT = true;
@@ -295,8 +295,8 @@ function bc_file_try_to_cancel() {
 
     BC_REFRESH_UI = true;
     BC_REFRESH_TX_N = true;
-    let input = document.getElementById("bc-input");
-    let output = document.getElementById("bc-output");
+    var input = document.getElementById("bc-input");
+    var output = document.getElementById("bc-output");
     input.value = "";
     output.value = "";
 }
@@ -356,7 +356,7 @@ function bc_read_files() {
                     btc_addr  : addr
                 };
 
-                let find = document.getElementById("bc-link-find");
+                var find = document.getElementById("bc-link-find");
                 find.href = "#"+addr;
                 find.title = "Go to channel #"+addr+".";
 
@@ -384,7 +384,7 @@ function bc_read_files() {
     }
 
     if (BC_FILE_POS === 0 && BC_FILE_HASHER === null) {
-        let input = document.getElementById("bc-input");
+        var input = document.getElementById("bc-input");
         input.value = BC_FILE_LIST[0].name+" ("+formatBytes(BC_FILE_LIST[0].size)+")";
     }
 
@@ -397,8 +397,8 @@ function bc_refresh_tx_n() {
     if (BC_FILE_CHECKING) return;
     BC_REFRESH_TX_N = false;
 
-    let output = document.getElementById("bc-output");
-    let addr = output.value;
+    var output = document.getElementById("bc-output");
+    var addr = output.value;
 
     if (!Bitcoin.testAddress(addr)) {
         bc_refresh_txs("");
@@ -412,7 +412,7 @@ function bc_refresh_tx_n() {
         function(response) {
             BC_FILE_CHECKING = false;
 
-            let output = document.getElementById("bc-output");
+            var output = document.getElementById("bc-output");
             if (addr !== output.value) return;
 
                  if (response === false) bc_refresh_txs("");
@@ -459,14 +459,14 @@ function bc_read_blob(file, opt_startByte, opt_stopByte) {
 
 function bc_refresh_txs(addr, n_tx) {
     if (addr === "") {
-        let txs = document.getElementById("bc-txs-span");
+        var txs = document.getElementById("bc-txs-span");
         if (!txs.classList.contains("appear")) return;
 
         txs.classList.remove("appear");
         txs.classList.add("disappear");
 
         setTimeout(function() {
-            let txs = document.getElementById("bc-txs-span");
+            var txs = document.getElementById("bc-txs-span");
             while (txs.hasChildNodes()) txs.removeChild(txs.lastChild);
             txs.appendChild(document.createTextNode("(empty channel)"));
         }, 1000);
@@ -474,12 +474,12 @@ function bc_refresh_txs(addr, n_tx) {
         return;
     }
 
-    let txs = document.getElementById("bc-txs-span");
+    var txs = document.getElementById("bc-txs-span");
     while (txs.hasChildNodes()) txs.removeChild(txs.lastChild);
 
-    let text = "Found "+n_tx+" transaction"+(n_tx == 1 ? "" : "s")+".";
+    var text = "Found "+n_tx+" transaction"+(n_tx == 1 ? "" : "s")+".";
 
-    let a_proof   = document.createElement("a");
+    var a_proof   = document.createElement("a");
     a_proof.appendChild(document.createTextNode(text));
     a_proof.title = "Browse this channel's transactions.";
     a_proof.href  = "https://blockchain.info/address/"+addr;
@@ -493,17 +493,17 @@ function bc_refresh_txs(addr, n_tx) {
     txs.classList.add("appear");
 }
 
-let bc_check_hash = (function() {
-    let running = false;
+var bc_check_hash = (function() {
+    var running = false;
 
     return function() {
         if (running) return;
         running = true;
 
-        let address = null;
-        let hashes = location.hash.substring(1).split("#");
-        for (let i=0, sz=hashes.length; i<sz; ++i) {
-            let hash = decodeURIComponent(hashes[i]);
+        var address = null;
+        var hashes = location.hash.substring(1).split("#");
+        for (var i=0, sz=hashes.length; i<sz; ++i) {
+            var hash = decodeURIComponent(hashes[i]);
                  if (Bitcoin.testAddress(hash)) address = hash;
             else if (hash.length > 0) {
                 var ripemd160 = CryptoJS.algo.RIPEMD160.create();
@@ -513,10 +513,10 @@ let bc_check_hash = (function() {
         }
 
         if (address !== null) {
-            let input = document.getElementById("bc-input");
+            var input = document.getElementById("bc-input");
             var ripemd160 = CryptoJS.algo.RIPEMD160.create();
             ripemd160.update(input.value);
-            let input_hash = Bitcoin.createAddressFromText(hex2ascii(ripemd160.finalize()));
+            var input_hash = Bitcoin.createAddressFromText(hex2ascii(ripemd160.finalize()));
 
             if (input.value !== address && input_hash !== address) {
                 input.value = address;
@@ -525,7 +525,7 @@ let bc_check_hash = (function() {
                 return;
             }
 
-            let output = document.getElementById("bc-output");
+            var output = document.getElementById("bc-output");
             if ((output.value !== input.value && output.value !== input_hash)
             || BC_FILE_CHECKING) {
                 running = false;
@@ -536,26 +536,26 @@ let bc_check_hash = (function() {
         if (address !== BC_ADDRESS) {
             BC_ADDRESS = address;
 
-            let x = document.getElementsByClassName("bc-view");
-            for (let i = 0; i < x.length; i++) {
+            var x = document.getElementsByClassName("bc-view");
+            for (var i = 0; i < x.length; i++) {
                 x[i].classList.remove("appear");
                 x[i].classList.add("disappear");
             }
 
             setTimeout(function() {
-                let x = document.getElementsByClassName("bc-view");
-                for (let i = 0; i < x.length; i++) {
+                var x = document.getElementsByClassName("bc-view");
+                for (var i = 0; i < x.length; i++) {
                     x[i].classList.add("bc-hidden-view");
                 }
 
                 if (BC_ADDRESS === null) {
-                    let view = document.getElementById("bc-main");
+                    var view = document.getElementById("bc-main");
                     view.classList.remove("disappear");
                     view.classList.add("appear");
                     view.classList.remove("bc-hidden-view");
                 }
                 else {
-                    let view = document.getElementById("bc-chan");
+                    var view = document.getElementById("bc-chan");
                     view.classList.remove("disappear");
                     view.classList.add("appear");
                     view.classList.remove("bc-hidden-view");

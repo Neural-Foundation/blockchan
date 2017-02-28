@@ -1,6 +1,6 @@
-let OPEN_HTTP_REQUESTS= 0;
-let HTTP_REQUESTS     = {};
-let NEXT_REQUEST_ID   = 1;
+var OPEN_HTTP_REQUESTS= 0;
+var HTTP_REQUESTS     = {};
+var NEXT_REQUEST_ID   = 1;
 
 function xmlhttpPost(strURL, strParams, fun) {
     var timeout = 20000;
